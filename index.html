@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Lab - Equipment Checkout System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-amber-400 text-indigo-950 p-2 rounded-xl font-black text-xl shadow-sm">🎓</div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight tracking-tight">Faculty Lab & Equipment Checkout</h1>
+          <p class="text-xs text-indigo-200">University Gear Reservation Portal</p>
+        </div>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="flex items-center gap-2.5">
+        <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Online 24/7
+        </span>
+        <button id="btnAdminMode" onclick="promptAdminLogin()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-800 hover:bg-indigo-700 text-indigo-100 text-xs font-semibold border border-indigo-600 transition shadow-sm">
+          <span>🔒</span>
+          <span id="adminBtnText">Admin Portal (PIN)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- ============================================== -->
+    <!-- 1. STUDENT VIEW                                -->
+    <!-- ============================================== -->
+    <div id="studentView" class="space-y-6">
+
+      <!-- 1.A: Student Identification Gateway (Shown First) -->
+      <div id="studentAuthBox" class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 max-w-lg mx-auto text-center space-y-5">
+        <div class="w-16 h-16 bg-indigo-50 text-indigo-700 rounded-2xl flex items-center justify-center text-3xl mx-auto font-black shadow-inner">
+          🎓
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 tracking-tight">Student Equipment Checkout</h2>
+          <p class="text-xs text-slate-500 mt-1.5 max-w-sm mx-auto leading-relaxed">
+            Enter your Student ID and name to unlock the authorized gear assigned to your course.
+          </p>
+        </div>
+
+        <div class="space-y-3.5 text-left text-xs pt-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Student Full Name:</label>
+            <input type="text" id="loginStudentName" placeholder="e.g. John Doe" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">University Student ID:</label>
+            <input type="text" id="loginStudentID" onkeydown="if(event.key==='Enter') loginStudent()" placeholder="e.g. 202401" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-center text-sm font-bold tracking-widest focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+          </div>
+
+          <div id="studentAuthError" class="hidden p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-bold text-center">
+            <!-- Dynamic Error Msg -->
+          </div>
+
+          <button onclick="loginStudent()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3.5 rounded-xl transition shadow hover:shadow-md">
+            Verify Course & Access Equipment 🚀
+          </button>
+        </div>
+
+        <!-- Demo Quick Credentials -->
+        <div class="bg-indigo-50/70 border border-indigo-100 p-3.5 rounded-2xl text-[11px] text-indigo-900 text-left space-y-1.5">
+          <p class="font-bold flex items-center gap-1.5">
+            <span>💡</span>
+            <span>Pre-registered Demo IDs for Testing:</span>
+          </p>
+          <div class="flex flex-wrap gap-2 pt-1 text-[10px]">
+            <button onclick="fillStudentDemo('202401', 'Alex Johnson')" class="bg-white px-2.5 py-1.5 rounded-lg border border-indigo-200 hover:bg-indigo-100 transition">
+              <span class="font-bold">202401</span> (Cinematography)
+            </button>
+            <button onclick="fillStudentDemo('202402', 'Sarah Williams')" class="bg-white px-2.5 py-1.5 rounded-lg border border-indigo-200 hover:bg-indigo-100 transition">
+              <span class="font-bold">202402</span> (Audio Engineering)
+            </button>
+            <button onclick="fillStudentDemo('202403', 'Michael Brown')" class="bg-white px-2.5 py-1.5 rounded-lg border border-indigo-200 hover:bg-indigo-100 transition">
+              <span class="font-bold">202403</span> (Doc Film)
+            </button>
+            <button onclick="fillStudentDemo('202404', 'David Miller')" class="bg-white px-2.5 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition">
+              <span class="font-bold">202404</span> (Suspended)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.B: Authenticated Student Dashboard -->
+      <div id="studentDashboard" class="hidden space-y-6">
+
+        <!-- Student Info Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-wrap justify-between items-center gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg shadow-inner">
+              👤
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-slate-900" id="currentStudentName">Student Name</span>
+                <span class="text-[11px] font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold" id="currentStudentIDBadge">202401</span>
+              </div>
+              <p class="text-xs text-indigo-700 font-semibold mt-0.5">
+                Authorized Course: <span id="currentStudentCourseBadge" class="font-bold text-indigo-900 underline">Cinematography (Film 201)</span>
+              </p>
+            </div>
+          </div>
+          <button onclick="logoutStudent()" class="text-xs text-red-600 hover:text-red-800 font-bold bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl border border-red-200 transition">
+            Switch Student / Sign Out 🔄
+          </button>
+        </div>
+
+        <!-- Date & Time Slot Selector -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <div class="flex items-center gap-2 mb-3.5 text-indigo-900 font-bold text-sm">
+            <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">🕒</span>
+            <span>Select your pickup and return window to verify real-time availability:</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1.5">Pickup Date & Time:</label>
+              <input type="datetime-local" id="pickupDateTime" onchange="filterEquipment()" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl focus:ring-2 focus:ring-indigo-500 p-2.5 font-medium">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1.5">Return Date & Time:</label>
+              <input type="datetime-local" id="returnDateTime" onchange="filterEquipment()" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl focus:ring-2 focus:ring-indigo-500 p-2.5 font-medium">
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipment Catalog Grid -->
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-base text-slate-900 flex items-center gap-2">
+              <span>Authorized Equipment Catalog</span>
+              <span id="equipmentCount" class="bg-indigo-100 text-indigo-700 text-xs px-2.5 py-0.5 rounded-full font-bold">4</span>
+            </h2>
+            <div class="text-xs text-slate-500">
+              * Real photographs of laboratory assets
+            </div>
+          </div>
+
+          <div id="equipmentGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+
+        <!-- Policy & Checkout Rules -->
+        <div class="bg-slate-100 border border-slate-200 rounded-2xl p-5 text-sm text-slate-700">
+          <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2 text-xs">
+            <span>📋</span>
+            <span>Laboratory Checkout Policies & Terms (Configurable via Admin):</span>
+          </h3>
+          <ul id="publicRulesList" class="list-disc list-inside space-y-1 text-xs text-slate-600">
+            <li>A valid University Student ID card must be presented upon physical checkout.</li>
+            <li>Maximum loan duration is 24 hours per individual student project.</li>
+            <li>Inspect all camera lenses, batteries, and memory cards before leaving the facility.</li>
+            <li>Late returns result in an automated 2-week borrowing suspension.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- 2. ADMIN / MANAGER VIEW                        -->
+    <!-- ============================================== -->
+    <div id="adminView" class="hidden space-y-6">
+
+      <!-- Admin Top Summary -->
+      <div class="bg-indigo-900 text-white rounded-2xl p-5 shadow-sm flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <h2 class="text-lg font-bold tracking-tight">Lab Administrator Dashboard</h2>
+          <p class="text-xs text-indigo-200 mt-0.5">Manage gear inventory, student course permissions, and checkout policies with zero code</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="openAddModal()" class="bg-amber-400 hover:bg-amber-500 text-indigo-950 font-bold text-xs px-4 py-2 rounded-xl transition shadow">
+            + Add New Asset
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Tabs -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex border-b border-slate-200 text-xs font-bold bg-slate-50">
+          <button id="tabBtnEquipment" onclick="switchAdminTab('equipment')" class="px-4 py-3 border-b-2 border-indigo-600 text-indigo-600">
+            📦 Gear Inventory & Allocation
+          </button>
+          <button id="tabBtnStudents" onclick="switchAdminTab('students')" class="px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+            👥 Student Permissions (<span id="adminStudentsCount">4</span>)
+          </button>
+          <button id="tabBtnBookings" onclick="switchAdminTab('bookings')" class="px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+            📅 Reservation Schedule (<span id="adminPendingCount">1</span>)
+          </button>
+          <button id="tabBtnRules" onclick="switchAdminTab('rules')" class="px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+            ⚙️ Policies & Terms
+          </button>
+        </div>
+
+        <!-- Tab 1: Equipment List -->
+        <div id="adminTabEquipment" class="p-5">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Photo</th>
+                  <th class="p-3">Asset & Barcode</th>
+                  <th class="p-3">Assigned Course</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3">Max Duration</th>
+                  <th class="p-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminEquipmentTableBody" class="divide-y divide-slate-100">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 1.5: Students Management -->
+        <div id="adminTabStudents" class="hidden p-5 space-y-6">
+          <!-- Add Student Form -->
+          <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-4">
+            <h4 class="font-bold text-xs text-indigo-950 mb-3 flex items-center gap-1.5">
+              <span>➕</span>
+              <span>Register Student & Authorize Course Access:</span>
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+              <div>
+                <label class="block font-bold text-slate-600 mb-1">Student Name:</label>
+                <input type="text" id="newStudentName" placeholder="e.g. Emily Clark" class="w-full p-2 bg-white border border-slate-300 rounded-lg">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-600 mb-1">Student ID:</label>
+                <input type="text" id="newStudentID" placeholder="e.g. 202405" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-mono text-center font-bold">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-600 mb-1">Authorized Course:</label>
+                <select id="newStudentCourse" class="w-full p-2 bg-white border border-slate-300 rounded-lg">
+                  <option value="cinematography">Cinematography (Film 201)</option>
+                  <option value="sound">Audio Engineering (Audio 102)</option>
+                  <option value="documentary">Advanced Documentary (Doc 301)</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <button onclick="saveNewStudent()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-2 rounded-lg transition shadow">
+                  + Save & Authorize
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Students Table -->
+          <div class="overflow-x-auto">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-slate-700">Enrolled Students & Course Access List:</span>
+              <span class="text-[11px] text-slate-500">* Students only see gear tied to their registered course ID</span>
+            </div>
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Student ID</th>
+                  <th class="p-3">Name</th>
+                  <th class="p-3">Authorized Course</th>
+                  <th class="p-3">Permission Status</th>
+                  <th class="p-3 text-center">Controls</th>
+                </tr>
+              </thead>
+              <tbody id="adminStudentsTableBody" class="divide-y divide-slate-100">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Bookings -->
+        <div id="adminTabBookings" class="hidden p-5">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Booking ID</th>
+                  <th class="p-3">Student Name</th>
+                  <th class="p-3">Student ID</th>
+                  <th class="p-3">Asset</th>
+                  <th class="p-3">Time Window</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-center">Decision</th>
+                </tr>
+              </thead>
+              <tbody id="adminBookingsTableBody" class="divide-y divide-slate-100">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Rules Config -->
+        <div id="adminTabRules" class="hidden p-5 space-y-4">
+          <p class="text-xs text-slate-500 font-medium">Update checkout terms and requirements shown to students:</p>
+          <textarea id="rulesEditTextarea" rows="6" class="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 leading-relaxed"></textarea>
+          <button onclick="saveRules()" class="bg-indigo-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl hover:bg-indigo-700 transition">
+            Save & Publish Terms Instantly
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL: BOOKING FORM FOR STUDENT                -->
+  <!-- ============================================== -->
+  <div id="bookingModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="font-bold text-base text-slate-900">Confirm Equipment Checkout</h3>
+          <p id="modalItemName" class="text-xs text-indigo-600 font-bold mt-0.5">Sony FX3 Cinema Camera</p>
+        </div>
+        <button onclick="closeBookingModal()" class="text-slate-400 hover:text-slate-700 font-bold text-xl">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Student Full Name:</label>
+          <input type="text" id="bookingStudentName" placeholder="Full name" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">University Student ID:</label>
+          <input type="text" id="bookingStudentID" placeholder="ID Number" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Number:</label>
+          <input type="tel" id="bookingStudentPhone" placeholder="+1 (555) 019-2834" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl">
+        </div>
+
+        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-indigo-900 space-y-1">
+          <div class="flex justify-between">
+            <span class="font-bold">Reservation Slot:</span>
+            <span id="modalTimeRange">From 10:00 AM to 04:00 PM</span>
+          </div>
+          <p class="text-[11px] text-indigo-700">The gear is verified available and will be secured under your name.</p>
+        </div>
+
+        <div class="flex items-start gap-2 pt-1">
+          <input type="checkbox" id="agreeTerms" class="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500">
+          <label for="agreeTerms" class="text-slate-600 text-[11px] leading-relaxed">
+            I confirm that I am enrolled in <b id="modalCourseBadge">Cinematography</b> and pledge to handle the equipment safely and return it in original condition on time.
+          </label>
+        </div>
+      </div>
+
+      <div class="pt-2 flex gap-2">
+        <button onclick="submitBooking()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow">
+          Submit Checkout Request
+        </button>
+        <button onclick="closeBookingModal()" class="px-4 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl hover:bg-slate-200">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: ADD EQUIPMENT (ADMIN)                   -->
+  <!-- ============================================== -->
+  <div id="addModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-base text-slate-900">+ Add New Laboratory Asset</h3>
+        <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-700 font-bold text-xl">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Equipment Name:</label>
+          <input type="text" id="newEquipName" placeholder="e.g. Canon R6 Mark II" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Image URL (Direct link or Unsplash):</label>
+          <input type="text" id="newEquipImage" placeholder="https://images.unsplash.com/..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Allocated Course Access:</label>
+          <select id="newEquipCourse" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl">
+            <option value="cinematography">Cinematography (Film 201)</option>
+            <option value="sound">Audio Engineering (Audio 102)</option>
+            <option value="documentary">Advanced Documentary (Doc 301)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Asset Tag / Barcode:</label>
+          <input type="text" id="newEquipBarcode" placeholder="LAB-CAM-009" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono">
+        </div>
+      </div>
+
+      <div class="pt-2 flex gap-2">
+        <button onclick="saveNewEquipment()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow">
+          Publish Asset to Course
+        </button>
+        <button onclick="closeAddModal()" class="px-4 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl hover:bg-slate-200">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: ADMIN LOGIN (PIN CODE)                  -->
+  <!-- ============================================== -->
+  <div id="adminLoginModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <span>🔒</span>
+          <span>Lab Administrator Access</span>
+        </h3>
+        <button onclick="closeAdminLoginModal()" class="text-slate-400 hover:text-slate-700 font-bold text-xl">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <p class="text-slate-600">Restricted to lab faculty & supervisors to manage gear, rules, and student permissions. Enter PIN:</p>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Supervisor Security PIN:</label>
+          <input type="password" id="adminPinInput" onkeydown="if(event.key==='Enter') checkAdminPin()" placeholder="Default PIN: 1234" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-center text-sm font-bold tracking-widest focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div id="adminLoginError" class="hidden p-2.5 bg-red-50 text-red-700 rounded-xl text-xs font-bold text-center">
+          ⚠️ Incorrect PIN! Access is restricted to staff.
+        </div>
+      </div>
+
+      <div class="pt-2 flex gap-2">
+        <button onclick="checkAdminPin()" class="flex-1 bg-indigo-900 hover:bg-indigo-800 text-white font-bold text-xs py-2.5 rounded-xl transition shadow">
+          Unlock Dashboard
+        </button>
+        <button onclick="closeAdminLoginModal()" class="px-4 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl hover:bg-slate-200">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- JAVASCRIPT LOGIC                               -->
+  <!-- ============================================== -->
+  <script>
+    // 1. Initial State Data
+    let courses = {
+      cinematography: { name: "Cinematography (Film 201)" },
+      sound: { name: "Audio Engineering (Audio 102)" },
+      documentary: { name: "Advanced Documentary (Doc 301)" }
+    };
+
+    let equipmentList = [
+      {
+        id: 1,
+        name: "Sony FX3 Full-Frame Cinema Camera",
+        barcode: "LAB-CAM-001",
+        course: "cinematography",
+        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&auto=format&fit=crop&q=80",
+        maxHours: "24 Hours",
+        status: "available",
+        specs: "24-70mm f/2.8 Lens + 2x Batteries + 128GB Card"
+      },
+      {
+        id: 2,
+        name: "Blackmagic Pocket Cinema 6K Pro",
+        barcode: "LAB-CAM-002",
+        course: "cinematography",
+        image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&auto=format&fit=crop&q=80",
+        maxHours: "24 Hours",
+        status: "available",
+        specs: "Touch Screen + Cage + Pelican Case + Charger"
+      },
+      {
+        id: 3,
+        name: "DJI Ronin RS3 Pro Gimbal Stabilizer",
+        barcode: "LAB-GIM-001",
+        course: "cinematography",
+        image: "https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=600&auto=format&fit=crop&q=80",
+        maxHours: "12 Hours",
+        status: "available",
+        specs: "Wireless Focus Motor + Dual Handgrip + Quick Plate"
+      },
+      {
+        id: 4,
+        name: "Zoom H6 6-Track Audio Recorder",
+        barcode: "LAB-AUD-001",
+        course: "sound",
+        image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=600&auto=format&fit=crop&q=80",
+        maxHours: "48 Hours",
+        status: "available",
+        specs: "4x XLR Combo Inputs + XY Mic Capsule + SD Card"
+      },
+      {
+        id: 5,
+        name: "Sennheiser EW 100 G4 Wireless Lav Kit",
+        barcode: "LAB-AUD-002",
+        course: "sound",
+        image: "https://images.unsplash.com/photo-1520523839898-507127054976?w=600&auto=format&fit=crop&q=80",
+        maxHours: "24 Hours",
+        status: "available",
+        specs: "Transmitter + Bodypack Receiver + ME 2-II Microphone"
+      },
+      {
+        id: 6,
+        name: "Aputure Light Storm 300d II LED Kit",
+        barcode: "LAB-LGT-001",
+        course: "documentary",
+        image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80",
+        maxHours: "24 Hours",
+        status: "available",
+        specs: "Heavy Duty Stand + Light Dome Softbox + Remote"
+      }
+    ];
+
+    // Sample Bookings for Overlap/Conflict Demonstration
+    let today = new Date();
+    let tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    let startIso = tomorrow.toISOString().split('T')[0] + "T10:00";
+    let endIso = tomorrow.toISOString().split('T')[0] + "T16:00";
+
+    let bookings = [
+      {
+        id: "BK-8021",
+        equipmentId: 2,
+        equipmentName: "Blackmagic Pocket Cinema 6K Pro",
+        studentName: "Joseph Miller",
+        studentId: "20220194",
+        pickup: startIso,
+        return: endIso,
+        status: "Confirmed"
+      }
+    ];
+
+    let rules = [
+      "A valid University Student ID card must be presented upon physical checkout.",
+      "Maximum loan duration is 24 hours per individual student project.",
+      "Inspect all camera lenses, batteries, and memory cards before leaving the facility.",
+      "Late returns result in an automated 2-week borrowing suspension."
+    ];
+
+    let selectedItemForBooking = null;
+
+    // Student Roster & Course Authorization (Managed by Admin)
+    let students = [
+      { id: "202401", name: "Alex Johnson", course: "cinematography", status: "active" },
+      { id: "202402", name: "Sarah Williams", course: "sound", status: "active" },
+      { id: "202403", name: "Michael Brown", course: "documentary", status: "active" },
+      { id: "202404", name: "David Miller", course: "cinematography", status: "suspended" }
+    ];
+
+    let currentStudent = null;
+
+    // Admin Auth State
+    let isAdminLoggedIn = false;
+    let adminPin = "1234"; // Default PIN
+
+    function promptAdminLogin() {
+      if (isAdminLoggedIn) {
+        logoutAdmin();
+      } else {
+        document.getElementById('adminPinInput').value = "";
+        document.getElementById('adminLoginError').classList.add('hidden');
+        document.getElementById('adminLoginModal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
+      }
+    }
+
+    function closeAdminLoginModal() {
+      document.getElementById('adminLoginModal').classList.add('hidden');
+    }
+
+    function checkAdminPin() {
+      const input = document.getElementById('adminPinInput').value;
+      if (input === adminPin) {
+        isAdminLoggedIn = true;
+        closeAdminLoginModal();
+        showAdminView();
+      } else {
+        document.getElementById('adminLoginError').classList.remove('hidden');
+      }
+    }
+
+    function showAdminView() {
+      document.getElementById('studentView').classList.add('hidden');
+      document.getElementById('adminView').classList.remove('hidden');
+
+      const btnAdmin = document.getElementById('btnAdminMode');
+      btnAdmin.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-indigo-950 text-xs font-bold border border-amber-300 transition shadow";
+      document.getElementById('adminBtnText').innerText = "Exit Admin Mode 🚪";
+
+      renderAdminTable();
+      renderAdminStudents();
+      renderAdminBookings();
+    }
+
+    function logoutAdmin() {
+      isAdminLoggedIn = false;
+      document.getElementById('studentView').classList.remove('hidden');
+      document.getElementById('adminView').classList.add('hidden');
+
+      const btnAdmin = document.getElementById('btnAdminMode');
+      btnAdmin.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-800 hover:bg-indigo-700 text-indigo-100 text-xs font-semibold border border-indigo-600 transition";
+      document.getElementById('adminBtnText').innerText = "Admin Portal (PIN)";
+
+      if (currentStudent) {
+        filterEquipment();
+      }
+    }
+
+    // 2. Initialize
+    window.onload = function() {
+      document.getElementById('pickupDateTime').value = startIso;
+      document.getElementById('returnDateTime').value = endIso;
+      document.getElementById('rulesEditTextarea').value = rules.join('\n');
+
+      renderAdminTable();
+      renderAdminStudents();
+      renderAdminBookings();
+    };
+
+    // ==========================================
+    // Student Authentication
+    // ==========================================
+    function fillStudentDemo(id, name) {
+      document.getElementById('loginStudentID').value = id;
+      document.getElementById('loginStudentName').value = name;
+      loginStudent();
+    }
+
+    function loginStudent() {
+      const idInput = document.getElementById('loginStudentID').value.trim();
+      const nameInput = document.getElementById('loginStudentName').value.trim();
+      const errorEl = document.getElementById('studentAuthError');
+
+      if (!idInput) {
+        errorEl.innerText = "⚠️ Please enter your University Student ID.";
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      const student = students.find(s => s.id === idInput);
+      if (!student) {
+        errorEl.innerHTML = `⚠️ Student ID (<b>${idInput}</b>) is not registered in any active course.<br>Please contact the lab supervisor to grant you course authorization.`;
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      if (student.status === "suspended") {
+        errorEl.innerHTML = `🚫 Account for (<b>${student.name}</b>) is currently suspended from borrowing equipment due to past overdue returns. Please visit the lab supervisor.`;
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      errorEl.classList.add('hidden');
+      currentStudent = { ...student };
+      if (nameInput) currentStudent.name = nameInput;
+
+      document.getElementById('currentStudentName').innerText = currentStudent.name;
+      document.getElementById('currentStudentIDBadge').innerText = currentStudent.id;
+      document.getElementById('currentStudentCourseBadge').innerText = courses[currentStudent.course]?.name || currentStudent.course;
+
+      document.getElementById('studentAuthBox').classList.add('hidden');
+      document.getElementById('studentDashboard').classList.remove('hidden');
+
+      filterEquipment();
+    }
+
+    function logoutStudent() {
+      currentStudent = null;
+      document.getElementById('studentDashboard').classList.add('hidden');
+      document.getElementById('studentAuthBox').classList.remove('hidden');
+      document.getElementById('loginStudentID').value = "";
+      document.getElementById('loginStudentName').value = "";
+      document.getElementById('studentAuthError').classList.add('hidden');
+    }
+
+    // ==========================================
+    // Filter Equipment (Course + Schedule Conflict)
+    // ==========================================
+    function filterEquipment() {
+      if (!currentStudent) return;
+
+      const studentCourse = currentStudent.course;
+      const pickupVal = document.getElementById('pickupDateTime').value;
+      const returnVal = document.getElementById('returnDateTime').value;
+
+      const grid = document.getElementById('equipmentGrid');
+      grid.innerHTML = "";
+
+      let count = 0;
+
+      equipmentList.forEach(item => {
+        // Enforce strict course isolation
+        if (item.course !== studentCourse) {
+          return;
+        }
+
+        // Check availability conflict
+        let isBookedInSlot = false;
+        if (pickupVal && returnVal) {
+          const reqStart = new Date(pickupVal).getTime();
+          const reqEnd = new Date(returnVal).getTime();
+
+          isBookedInSlot = bookings.some(b => {
+            if (b.equipmentId !== item.id) return false;
+            const bStart = new Date(b.pickup).getTime();
+            const bEnd = new Date(b.return).getTime();
+            return (reqStart < bEnd && reqEnd > bStart);
+          });
+        }
+
+        count++;
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col";
+
+        const availabilityBadge = isBookedInSlot
+          ? `<span class="bg-red-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">🔴 Booked in this slot</span>`
+          : `<span class="bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">🟢 Available for Pickup</span>`;
+
+        const actionButton = isBookedInSlot
+          ? `<button disabled class="w-full bg-slate-100 text-slate-400 font-bold text-xs py-2.5 rounded-xl cursor-not-allowed">Booked for chosen time</button>`
+          : `<button onclick="openBookingModal(${item.id})" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow">Reserve Equipment</button>`;
+
+        card.innerHTML = `
+          <div class="relative h-44 bg-slate-100 overflow-hidden">
+            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+            <div class="absolute top-3 right-3">
+              ${availabilityBadge}
+            </div>
+            <div class="absolute bottom-2 left-2 bg-black/75 text-white text-[10px] px-2 py-0.5 rounded font-mono">
+              ${item.barcode}
+            </div>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="text-[11px] font-bold text-indigo-600 mb-1 uppercase tracking-wide">
+                Course: ${courses[item.course]?.name.split('(')[0] || item.course}
+              </div>
+              <h3 class="font-bold text-sm text-slate-900 leading-snug">${item.name}</h3>
+              <p class="text-xs text-slate-500 mt-1.5 line-clamp-2">${item.specs}</p>
+            </div>
+            <div class="pt-2 border-t border-slate-100 space-y-2">
+              <div class="flex justify-between text-[11px] text-slate-600">
+                <span>Max Loan:</span>
+                <span class="font-bold text-slate-800">${item.maxHours}</span>
+              </div>
+              ${actionButton}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById('equipmentCount').innerText = count;
+    }
+
+    // ==========================================
+    // Booking Handlers
+    // ==========================================
+    function openBookingModal(itemId) {
+      const item = equipmentList.find(e => e.id === itemId);
+      if (!item) return;
+      selectedItemForBooking = item;
+
+      document.getElementById('modalItemName').innerText = item.name;
+      document.getElementById('modalCourseBadge').innerText = courses[item.course]?.name || item.course;
+
+      if (currentStudent) {
+        document.getElementById('bookingStudentName').value = currentStudent.name;
+        document.getElementById('bookingStudentID').value = currentStudent.id;
+      }
+
+      const pVal = document.getElementById('pickupDateTime').value.replace('T', ' ');
+      const rVal = document.getElementById('returnDateTime').value.replace('T', ' ');
+      document.getElementById('modalTimeRange').innerText = `${pVal} to ${rVal}`;
+
+      document.getElementById('bookingModal').classList.remove('hidden');
+    }
+
+    function closeBookingModal() {
+      document.getElementById('bookingModal').classList.add('hidden');
+      selectedItemForBooking = null;
+    }
+
+    function submitBooking() {
+      const name = document.getElementById('bookingStudentName').value.trim();
+      const id = document.getElementById('bookingStudentID').value.trim();
+      const phone = document.getElementById('bookingStudentPhone').value.trim();
+      const agreed = document.getElementById('agreeTerms').checked;
+
+      if (!name || !id || !phone) {
+        alert("Please provide a contact phone / WhatsApp number.");
+        return;
+      }
+      if (!agreed) {
+        alert("You must agree to the lab terms and safety policy.");
+        return;
+      }
+
+      const pVal = document.getElementById('pickupDateTime').value;
+      const rVal = document.getElementById('returnDateTime').value;
+
+      const newBooking = {
+        id: "BK-" + Math.floor(1000 + Math.random() * 9000),
+        equipmentId: selectedItemForBooking.id,
+        equipmentName: selectedItemForBooking.name,
+        studentName: name,
+        studentId: id,
+        pickup: pVal,
+        return: rVal,
+        status: "Confirmed"
+      };
+
+      bookings.push(newBooking);
+      closeBookingModal();
+      alert(`Reservation successful! Booking ID: ${newBooking.id}.\nPlease arrive at the lab with your Student ID card.`);
+
+      filterEquipment();
+      renderAdminBookings();
+    }
+
+    // ==========================================
+    // Admin Dashboard Functions
+    // ==========================================
+    function switchAdminTab(tab) {
+      ['equipment', 'students', 'bookings', 'rules'].forEach(t => {
+        const tabEl = document.getElementById('adminTab' + capitalize(t));
+        const btnEl = document.getElementById('tabBtn' + capitalize(t));
+        if (t === tab) {
+          tabEl.classList.remove('hidden');
+          btnEl.className = "px-4 py-3 border-b-2 border-indigo-600 text-indigo-600";
+        } else {
+          tabEl.classList.add('hidden');
+          btnEl.className = "px-4 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800";
+        }
+      });
+    }
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminEquipmentTableBody');
+      tbody.innerHTML = "";
+
+      equipmentList.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50";
+        tr.innerHTML = `
+          <td class="p-3">
+            <img src="${item.image}" class="w-12 h-10 object-cover rounded-lg border border-slate-200">
+          </td>
+          <td class="p-3">
+            <div class="font-bold text-slate-900">${item.name}</div>
+            <div class="text-[10px] text-slate-400 font-mono">${item.barcode}</div>
+          </td>
+          <td class="p-3">
+            <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded font-bold">
+              ${courses[item.course]?.name || item.course}
+            </span>
+          </td>
+          <td class="p-3">
+            <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold">Ready</span>
+          </td>
+          <td class="p-3 text-slate-600">${item.maxHours}</td>
+          <td class="p-3 text-center">
+            <button onclick="deleteEquipment(${item.id})" class="text-red-500 hover:text-red-700 font-bold">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderAdminStudents() {
+      const tbody = document.getElementById('adminStudentsTableBody');
+      tbody.innerHTML = "";
+      document.getElementById('adminStudentsCount').innerText = students.length;
+
+      students.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50";
+
+        const statusBadge = s.status === 'active'
+          ? `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold text-[10px]">🟢 Active</span>`
+          : `<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold text-[10px]">🔴 Suspended</span>`;
+
+        const toggleBtnText = s.status === 'active' ? "Suspend" : "Activate";
+        const toggleBtnClass = s.status === 'active' ? "text-amber-600 hover:underline" : "text-emerald-600 font-bold hover:underline";
+
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold text-slate-800">${s.id}</td>
+          <td class="p-3 font-bold text-slate-900">${s.name}</td>
+          <td class="p-3">
+            <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-[11px] font-bold">
+              ${courses[s.course]?.name || s.course}
+            </span>
+          </td>
+          <td class="p-3">${statusBadge}</td>
+          <td class="p-3 text-center space-x-2">
+            <button onclick="toggleStudentStatus('${s.id}')" class="text-xs ${toggleBtnClass}">${toggleBtnText}</button>
+            <span class="text-slate-300">|</span>
+            <button onclick="deleteStudent('${s.id}')" class="text-xs text-red-600 hover:underline">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function saveNewStudent() {
+      const name = document.getElementById('newStudentName').value.trim();
+      const id = document.getElementById('newStudentID').value.trim();
+      const course = document.getElementById('newStudentCourse').value;
+
+      if (!name || !id) {
+        alert("Please enter student name and ID.");
+        return;
+      }
+
+      if (students.some(s => s.id === id)) {
+        alert("This Student ID is already assigned to another student!");
+        return;
+      }
+
+      students.push({
+        id: id,
+        name: name,
+        course: course,
+        status: "active"
+      });
+
+      document.getElementById('newStudentName').value = "";
+      document.getElementById('newStudentID').value = "";
+      renderAdminStudents();
+      alert(`Student (${name}) successfully registered under (${courses[course].name})!`);
+    }
+
+    function toggleStudentStatus(id) {
+      const student = students.find(s => s.id === id);
+      if (!student) return;
+      student.status = student.status === 'active' ? 'suspended' : 'active';
+      renderAdminStudents();
+    }
+
+    function deleteStudent(id) {
+      if (confirm(`Are you sure you want to remove permissions for student ID (${id})?`)) {
+        students = students.filter(s => s.id !== id);
+        renderAdminStudents();
+      }
+    }
+
+    function renderAdminBookings() {
+      const tbody = document.getElementById('adminBookingsTableBody');
+      tbody.innerHTML = "";
+      document.getElementById('adminPendingCount').innerText = bookings.length;
+
+      bookings.forEach(b => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50";
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold text-indigo-700">${b.id}</td>
+          <td class="p-3 font-bold text-slate-900">${b.studentName}</td>
+          <td class="p-3 font-mono text-slate-600">${b.studentId}</td>
+          <td class="p-3 text-slate-800 font-medium">${b.equipmentName}</td>
+          <td class="p-3 text-[11px] text-slate-600">
+            From: ${b.pickup.replace('T', ' ')}<br>To: ${b.return.replace('T', ' ')}
+          </td>
+          <td class="p-3">
+            <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold text-[10px]">${b.status}</span>
+          </td>
+          <td class="p-3 text-center">
+            <button onclick="cancelBooking('${b.id}')" class="text-xs text-red-600 hover:underline">Cancel</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function deleteEquipment(id) {
+      if (confirm("Are you sure you want to remove this asset?")) {
+        equipmentList = equipmentList.filter(e => e.id !== id);
+        renderAdminTable();
+        filterEquipment();
+      }
+    }
+
+    function cancelBooking(id) {
+      if (confirm("Cancel this booking and release gear back to inventory?")) {
+        bookings = bookings.filter(b => b.id !== id);
+        renderAdminBookings();
+        filterEquipment();
+      }
+    }
+
+    function openAddModal() {
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').classList.add('hidden');
+    }
+
+    function saveNewEquipment() {
+      const name = document.getElementById('newEquipName').value.trim();
+      const image = document.getElementById('newEquipImage').value.trim() || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600";
+      const course = document.getElementById('newEquipCourse').value;
+      const barcode = document.getElementById('newEquipBarcode').value.trim() || "LAB-" + Math.floor(100 + Math.random()*900);
+
+      if (!name) {
+        alert("Please enter asset name.");
+        return;
+      }
+
+      const newItem = {
+        id: Date.now(),
+        name: name,
+        barcode: barcode,
+        course: course,
+        image: image,
+        maxHours: "24 Hours",
+        status: "available",
+        specs: "Standard laboratory asset ready for loan"
+      };
+
+      equipmentList.push(newItem);
+      closeAddModal();
+      renderAdminTable();
+      filterEquipment();
+      alert("Asset added and published to course inventory!");
+    }
+
+    function saveRules() {
+      const text = document.getElementById('rulesEditTextarea').value;
+      rules = text.split('\n').filter(r => r.trim() !== "");
+      const ul = document.getElementById('publicRulesList');
+      ul.innerHTML = "";
+      rules.forEach(r => {
+        const li = document.createElement('li');
+        li.innerText = r;
+        ul.appendChild(li);
+      });
+      alert("Checkout policies updated and published to students!");
+    }
+  </script>
+</body>
+</html>
