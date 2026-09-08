@@ -13,23 +13,23 @@
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
   <!-- Header -->
-  <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+  <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-3">
         <div class="bg-amber-400 text-indigo-950 p-2 rounded-xl font-black text-xl shadow-sm">🎓</div>
         <div>
-          <h1 class="font-bold text-lg leading-tight tracking-tight">Faculty Lab & Equipment Checkout</h1>
+          <h1 class="font-bold text-base md:text-lg leading-tight tracking-tight">Faculty Lab & Equipment Checkout</h1>
           <p class="text-xs text-indigo-200">University Gear Reservation Portal</p>
         </div>
       </div>
 
       <!-- Header Actions -->
-      <div class="flex items-center gap-2.5">
-        <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+      <div class="flex items-center gap-2.5 ml-auto">
+        <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full hidden sm:flex items-center gap-1.5 font-medium">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           Online 24/7
         </span>
-        <button id="btnAdminMode" onclick="promptAdminLogin()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-800 hover:bg-indigo-700 text-indigo-100 text-xs font-semibold border border-indigo-600 transition shadow-sm">
+        <button id="btnAdminMode" onclick="promptAdminLogin()" type="button" class="cursor-pointer flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-indigo-950 text-xs font-bold border border-amber-300 transition shadow-md hover:scale-105 active:scale-95">
           <span>🔒</span>
           <span id="adminBtnText">Admin Portal (PIN)</span>
         </button>
@@ -96,6 +96,14 @@
               <span class="font-bold">202404</span> (Suspended)
             </button>
           </div>
+        </div>
+
+        <!-- Admin Direct Entry inside Box -->
+        <div class="pt-2 border-t border-slate-100 text-center">
+          <button onclick="promptAdminLogin()" type="button" class="text-xs text-slate-500 hover:text-indigo-700 font-semibold inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition cursor-pointer">
+            <span>🔒</span>
+            <span>Are you a Faculty Instructor or Lab Admin? <b class="text-indigo-600 underline">Open Admin Portal (PIN: 1234)</b></span>
+          </button>
         </div>
       </div>
 
@@ -426,32 +434,38 @@
   <!-- ============================================== -->
   <!-- MODAL: ADMIN LOGIN (PIN CODE)                  -->
   <!-- ============================================== -->
-  <div id="adminLoginModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+  <div id="adminLoginModal" style="display: none; z-index: 99999;" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-slate-100">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
           <span>🔒</span>
-          <span>Lab Administrator Access</span>
+          <span>Lab Supervisor Portal Access</span>
         </h3>
-        <button onclick="closeAdminLoginModal()" class="text-slate-400 hover:text-slate-700 font-bold text-xl">&times;</button>
+        <button onclick="closeAdminLoginModal()" type="button" class="cursor-pointer text-slate-400 hover:text-slate-700 font-bold text-2xl leading-none">&times;</button>
       </div>
 
       <div class="space-y-3 text-xs">
-        <p class="text-slate-600">Restricted to lab faculty & supervisors to manage gear, rules, and student permissions. Enter PIN:</p>
+        <p class="text-slate-600 leading-relaxed">
+          Restricted to authorized faculty & lab supervisors to manage equipment inventory, student rosters, and borrowing rules.
+        </p>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Supervisor Security PIN:</label>
-          <input type="password" id="adminPinInput" onkeydown="if(event.key==='Enter') checkAdminPin()" placeholder="Default PIN: 1234" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-center text-sm font-bold tracking-widest focus:ring-2 focus:ring-indigo-500">
+          <label class="block font-bold text-slate-700 mb-1">Enter Security PIN:</label>
+          <input type="password" id="adminPinInput" onkeydown="if(event.key==='Enter') checkAdminPin()" placeholder="PIN (Default: 1234)" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-center text-lg font-mono font-bold tracking-widest focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <div class="flex justify-between items-center mt-2 text-[11px] text-slate-500">
+            <span>Default PIN: <b class="text-indigo-600 font-mono font-bold">1234</b></span>
+            <button type="button" onclick="quickFillAdminPin()" class="text-indigo-600 hover:text-indigo-800 font-bold underline cursor-pointer">Quick Fill 1234 &rarr;</button>
+          </div>
         </div>
-        <div id="adminLoginError" class="hidden p-2.5 bg-red-50 text-red-700 rounded-xl text-xs font-bold text-center">
-          ⚠️ Incorrect PIN! Access is restricted to staff.
+        <div id="adminLoginError" style="display: none;" class="p-2.5 bg-red-50 text-red-700 rounded-xl text-xs font-bold text-center border border-red-200">
+          ⚠️ Incorrect PIN! Default PIN is 1234.
         </div>
       </div>
 
       <div class="pt-2 flex gap-2">
-        <button onclick="checkAdminPin()" class="flex-1 bg-indigo-900 hover:bg-indigo-800 text-white font-bold text-xs py-2.5 rounded-xl transition shadow">
-          Unlock Dashboard
+        <button onclick="checkAdminPin()" type="button" class="cursor-pointer flex-1 bg-indigo-900 hover:bg-indigo-800 text-white font-bold text-xs py-3 rounded-xl transition shadow hover:shadow-md">
+          Unlock Dashboard 🚀
         </button>
-        <button onclick="closeAdminLoginModal()" class="px-4 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl hover:bg-slate-200">
+        <button onclick="closeAdminLoginModal()" type="button" class="cursor-pointer px-4 bg-slate-100 text-slate-600 font-bold text-xs py-3 rounded-xl hover:bg-slate-200">
           Cancel
         </button>
       </div>
@@ -578,52 +592,110 @@
     let adminPin = "1234"; // Default PIN
 
     function promptAdminLogin() {
+      console.log("promptAdminLogin clicked. Current state:", isAdminLoggedIn);
       if (isAdminLoggedIn) {
         logoutAdmin();
       } else {
-        document.getElementById('adminPinInput').value = "";
-        document.getElementById('adminLoginError').classList.add('hidden');
-        document.getElementById('adminLoginModal').classList.remove('hidden');
-        setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
+        const modal = document.getElementById('adminLoginModal');
+        if (modal) {
+          modal.style.display = 'flex';
+          modal.classList.remove('hidden');
+          const pinInput = document.getElementById('adminPinInput');
+          if (pinInput) pinInput.value = "";
+          const errBox = document.getElementById('adminLoginError');
+          if (errBox) {
+            errBox.style.display = 'none';
+            errBox.classList.add('hidden');
+          }
+          setTimeout(() => {
+            if (pinInput) pinInput.focus();
+          }, 100);
+        }
+      }
+    }
+
+    function quickFillAdminPin() {
+      const pinInput = document.getElementById('adminPinInput');
+      if (pinInput) {
+        pinInput.value = "1234";
+        checkAdminPin();
       }
     }
 
     function closeAdminLoginModal() {
-      document.getElementById('adminLoginModal').classList.add('hidden');
+      const modal = document.getElementById('adminLoginModal');
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+      }
     }
 
     function checkAdminPin() {
-      const input = document.getElementById('adminPinInput').value;
+      const pinInput = document.getElementById('adminPinInput');
+      const input = pinInput ? pinInput.value.trim() : "";
       if (input === adminPin) {
         isAdminLoggedIn = true;
         closeAdminLoginModal();
         showAdminView();
       } else {
-        document.getElementById('adminLoginError').classList.remove('hidden');
+        const err = document.getElementById('adminLoginError');
+        if (err) {
+          err.style.display = 'block';
+          err.classList.remove('hidden');
+        }
       }
     }
 
     function showAdminView() {
-      document.getElementById('studentView').classList.add('hidden');
-      document.getElementById('adminView').classList.remove('hidden');
+      const studentView = document.getElementById('studentView');
+      if (studentView) {
+        studentView.style.display = 'none';
+        studentView.classList.add('hidden');
+      }
+
+      const adminView = document.getElementById('adminView');
+      if (adminView) {
+        adminView.style.display = 'block';
+        adminView.classList.remove('hidden');
+      }
 
       const btnAdmin = document.getElementById('btnAdminMode');
-      btnAdmin.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-indigo-950 text-xs font-bold border border-amber-300 transition shadow";
-      document.getElementById('adminBtnText').innerText = "Exit Admin Mode 🚪";
+      if (btnAdmin) {
+        btnAdmin.className = "cursor-pointer flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold border border-red-400 transition shadow-md";
+      }
+      const adminText = document.getElementById('adminBtnText');
+      if (adminText) {
+        adminText.innerText = "Exit Admin Mode 🚪";
+      }
 
       renderAdminTable();
       renderAdminStudents();
       renderAdminBookings();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function logoutAdmin() {
       isAdminLoggedIn = false;
-      document.getElementById('studentView').classList.remove('hidden');
-      document.getElementById('adminView').classList.add('hidden');
+      const studentView = document.getElementById('studentView');
+      if (studentView) {
+        studentView.style.display = 'block';
+        studentView.classList.remove('hidden');
+      }
+
+      const adminView = document.getElementById('adminView');
+      if (adminView) {
+        adminView.style.display = 'none';
+        adminView.classList.add('hidden');
+      }
 
       const btnAdmin = document.getElementById('btnAdminMode');
-      btnAdmin.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-800 hover:bg-indigo-700 text-indigo-100 text-xs font-semibold border border-indigo-600 transition";
-      document.getElementById('adminBtnText').innerText = "Admin Portal (PIN)";
+      if (btnAdmin) {
+        btnAdmin.className = "cursor-pointer flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-indigo-950 text-xs font-bold border border-amber-300 transition shadow-md";
+      }
+      const adminText = document.getElementById('adminBtnText');
+      if (adminText) {
+        adminText.innerText = "Admin Portal (PIN)";
+      }
 
       if (currentStudent) {
         filterEquipment();
