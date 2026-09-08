@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUC Google Workspace System Simulation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 flex flex-col">
+
+  <!-- Top Banner -->
+  <div class="bg-indigo-950 border border-indigo-800/80 rounded-2xl p-4 mb-4 flex flex-wrap justify-between items-center gap-3 shadow-lg">
+    <div class="flex items-center gap-3">
+      <div class="bg-amber-400 text-indigo-950 w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl">
+        🎓
+      </div>
+      <div>
+        <h1 class="font-bold text-sm text-white flex items-center gap-2">
+          <span>AUC Google Workspace Integration (Live Simulation)</span>
+          <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] px-2 py-0.5 rounded-full">100% FERPA/Privacy Compliant</span>
+        </h1>
+        <p class="text-xs text-indigo-300">
+          All data resides strictly inside your official <code class="text-amber-300">@aucegypt.edu</code> Google Drive. Zero external servers.
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <span class="text-slate-400">Try booking on the left, and watch the Google Sheet update live on the right! ➡️</span>
+    </div>
+  </div>
+
+  <!-- Split Screen View -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1">
+
+    <!-- LEFT: Web App (Student View) -->
+    <div class="lg:col-span-6 bg-slate-50 text-slate-800 rounded-3xl shadow-xl border border-slate-700 overflow-hidden flex flex-col">
+      <!-- Browser Top Bar -->
+      <div class="bg-slate-200 border-b border-slate-300 px-4 py-2 flex items-center gap-2 text-xs text-slate-600 font-mono">
+        <span class="w-3 h-3 rounded-full bg-red-400 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span>
+        <span class="ml-2 bg-white px-3 py-1 rounded-md border border-slate-300 text-[11px] text-slate-700 flex-1 truncate">
+          🔒 https://script.google.com/a/aucegypt.edu/macros/s/auc-medialab/exec
+        </span>
+      </div>
+
+      <!-- App Header -->
+      <div class="bg-indigo-900 text-white p-3.5 flex justify-between items-center">
+        <div>
+          <h2 class="font-bold text-sm tracking-tight">AUC Media Lab Gear Checkout</h2>
+          <p class="text-[10px] text-indigo-200">The American University in Cairo</p>
+        </div>
+        <div class="text-[10px] bg-indigo-800 px-2.5 py-1 rounded-lg border border-indigo-700">
+          Logged in: <b id="simUserBadge" class="text-amber-300">alex.johnson@aucegypt.edu</b>
+        </div>
+      </div>
+
+      <!-- App Content Body -->
+      <div class="p-5 overflow-y-auto flex-1 space-y-4 text-xs">
+
+        <!-- Course Banner -->
+        <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-2xl flex justify-between items-center">
+          <div>
+            <span class="text-slate-500 text-[11px]">Authorized Course:</span>
+            <div class="font-bold text-indigo-900 text-sm">Cinematography (Film 201)</div>
+          </div>
+          <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-1 rounded text-[10px]">🟢 Active Student</span>
+        </div>
+
+        <!-- Quick Slot -->
+        <div class="grid grid-cols-2 gap-2 bg-white p-3 rounded-2xl border border-slate-200">
+          <div>
+            <span class="text-slate-500 text-[10px] font-bold">Pickup Time:</span>
+            <input type="text" value="Tomorrow 10:00 AM" readonly class="w-full bg-slate-50 font-bold text-slate-800 p-1.5 rounded border border-slate-200">
+          </div>
+          <div>
+            <span class="text-slate-500 text-[10px] font-bold">Return Time:</span>
+            <input type="text" value="Tomorrow 04:00 PM" readonly class="w-full bg-slate-50 font-bold text-slate-800 p-1.5 rounded border border-slate-200">
+          </div>
+        </div>
+
+        <!-- Available Gear Cards -->
+        <div class="space-y-3">
+          <div class="font-bold text-slate-700 flex justify-between">
+            <span>Available Course Gear (Pulled from Sheet):</span>
+            <span class="text-indigo-600 font-normal text-[11px]">3 Items</span>
+          </div>
+
+          <!-- Item 1 -->
+          <div class="bg-white p-3 rounded-2xl border border-slate-200 flex gap-3 items-center hover:shadow transition">
+            <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300" class="w-16 h-16 object-cover rounded-xl border border-slate-200">
+            <div class="flex-1">
+              <div class="font-bold text-slate-900 text-xs">Sony FX3 Cinema Camera</div>
+              <p class="text-[10px] text-slate-500">24-70mm f/2.8 + 2x Batteries + Case</p>
+              <div class="mt-1 flex items-center gap-2">
+                <span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.5 rounded">🟢 Ready</span>
+                <span class="text-[10px] text-slate-400 font-mono">AUC-CAM-001</span>
+              </div>
+            </div>
+            <button onclick="simBook('Sony FX3 Cinema Camera', '1')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] px-3 py-2 rounded-xl transition shadow">
+              Book Gear 📥
+            </button>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="bg-white p-3 rounded-2xl border border-slate-200 flex gap-3 items-center hover:shadow transition">
+            <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=300" class="w-16 h-16 object-cover rounded-xl border border-slate-200">
+            <div class="flex-1">
+              <div class="font-bold text-slate-900 text-xs">Blackmagic Pocket Cinema 6K</div>
+              <p class="text-[10px] text-slate-500">Rigged Cage + Monitor + Charger</p>
+              <div class="mt-1 flex items-center gap-2">
+                <span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.5 rounded">🟢 Ready</span>
+                <span class="text-[10px] text-slate-400 font-mono">AUC-CAM-002</span>
+              </div>
+            </div>
+            <button onclick="simBook('Blackmagic Pocket 6K', '2')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] px-3 py-2 rounded-xl transition shadow">
+              Book Gear 📥
+            </button>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="bg-white p-3 rounded-2xl border border-slate-200 flex gap-3 items-center hover:shadow transition">
+            <img src="https://images.unsplash.com/photo-1584905066893-7d5c142ba4e1?w=300" class="w-16 h-16 object-cover rounded-xl border border-slate-200">
+            <div class="flex-1">
+              <div class="font-bold text-slate-900 text-xs">DJI Ronin RS3 Pro Gimbal</div>
+              <p class="text-[10px] text-slate-500">Wireless Focus Motor + Dual Grips</p>
+              <div class="mt-1 flex items-center gap-2">
+                <span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.5 rounded">🟢 Ready</span>
+                <span class="text-[10px] text-slate-400 font-mono">AUC-GIM-001</span>
+              </div>
+            </div>
+            <button onclick="simBook('DJI Ronin RS3 Pro', '3')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] px-3 py-2 rounded-xl transition shadow">
+              Book Gear 📥
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- RIGHT: Google Sheet Database (Live Sync) -->
+    <div class="lg:col-span-6 bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl flex flex-col space-y-4">
+
+      <!-- Google Sheets UI Header -->
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-black text-sm">
+            📊
+          </div>
+          <div>
+            <div class="font-bold text-sm text-slate-100 flex items-center gap-2">
+              <span>AUC_MediaLab_System.xlsx</span>
+              <span class="bg-slate-800 text-emerald-400 text-[10px] px-2 py-0.5 rounded">Stored in AUC Drive</span>
+            </div>
+            <div class="text-[10px] text-slate-400">Connected to Google Apps Script</div>
+          </div>
+        </div>
+
+        <!-- Sheet Tabs Switcher -->
+        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+          <button id="btnTabBookings" onclick="switchSheetTab('Bookings')" class="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold transition">
+            Bookings (<span id="sheetBookingsCount">1</span>)
+          </button>
+          <button id="btnTabStudents" onclick="switchSheetTab('Students')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">
+            Students (4)
+          </button>
+          <button id="btnTabEquipment" onclick="switchSheetTab('Equipment')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">
+            Equipment (6)
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Sheet Table Container -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl flex-1 p-3 overflow-x-auto text-[11px] font-mono">
+
+        <!-- 1. Bookings Tab Table -->
+        <div id="tableBookings">
+          <table class="w-full text-left">
+            <thead class="text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-2">Booking_ID</th>
+                <th class="p-2">Equipment</th>
+                <th class="p-2">Student_Email</th>
+                <th class="p-2">Window</th>
+                <th class="p-2">Status</th>
+              </tr>
+            </thead>
+            <tbody id="sheetBookingsRows" class="divide-y divide-slate-800/60 text-slate-200">
+              <tr class="hover:bg-slate-800/40">
+                <td class="p-2 text-emerald-400 font-bold">AUC-BK-1001</td>
+                <td class="p-2">Sony FX3 Cinema</td>
+                <td class="p-2 text-slate-300">sarah.williams@aucegypt.edu</td>
+                <td class="p-2 text-slate-400 text-[10px]">Tomorrow 10:00 - 16:00</td>
+                <td class="p-2"><span class="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded text-[10px]">Confirmed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2. Students Tab Table -->
+        <div id="tableStudents" class="hidden">
+          <table class="w-full text-left">
+            <thead class="text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-2">Student_ID</th>
+                <th class="p-2">Name</th>
+                <th class="p-2">AUC_Email</th>
+                <th class="p-2">Course</th>
+                <th class="p-2">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-200">
+              <tr>
+                <td class="p-2 font-bold text-amber-400">202401</td>
+                <td class="p-2">Alex Johnson</td>
+                <td class="p-2 text-indigo-300">alex.johnson@aucegypt.edu</td>
+                <td class="p-2">cinematography</td>
+                <td class="p-2"><span class="text-emerald-400">active</span></td>
+              </tr>
+              <tr>
+                <td class="p-2 font-bold text-amber-400">202402</td>
+                <td class="p-2">Sarah Williams</td>
+                <td class="p-2 text-indigo-300">sarah.williams@aucegypt.edu</td>
+                <td class="p-2">sound</td>
+                <td class="p-2"><span class="text-emerald-400">active</span></td>
+              </tr>
+              <tr>
+                <td class="p-2 font-bold text-amber-400">202403</td>
+                <td class="p-2">Michael Brown</td>
+                <td class="p-2 text-indigo-300">michael.brown@aucegypt.edu</td>
+                <td class="p-2">documentary</td>
+                <td class="p-2"><span class="text-emerald-400">active</span></td>
+              </tr>
+              <tr>
+                <td class="p-2 font-bold text-amber-400">202404</td>
+                <td class="p-2">David Miller</td>
+                <td class="p-2 text-indigo-300">david.miller@aucegypt.edu</td>
+                <td class="p-2">cinematography</td>
+                <td class="p-2"><span class="text-red-400">suspended</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 3. Equipment Tab Table -->
+        <div id="tableEquipment" class="hidden">
+          <table class="w-full text-left">
+            <thead class="text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-2">Barcode</th>
+                <th class="p-2">Asset_Name</th>
+                <th class="p-2">Course</th>
+                <th class="p-2">Max_Hours</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-200">
+              <tr>
+                <td class="p-2 text-slate-400">AUC-CAM-001</td>
+                <td class="p-2 font-bold">Sony FX3 Cinema</td>
+                <td class="p-2 text-indigo-300">cinematography</td>
+                <td class="p-2">24 Hours</td>
+              </tr>
+              <tr>
+                <td class="p-2 text-slate-400">AUC-CAM-002</td>
+                <td class="p-2 font-bold">Blackmagic Pocket 6K</td>
+                <td class="p-2 text-indigo-300">cinematography</td>
+                <td class="p-2">24 Hours</td>
+              </tr>
+              <tr>
+                <td class="p-2 text-slate-400">AUC-GIM-001</td>
+                <td class="p-2 font-bold">DJI Ronin RS3 Pro</td>
+                <td class="p-2 text-indigo-300">cinematography</td>
+                <td class="p-2">12 Hours</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Live Log Feedback -->
+      <div id="simLog" class="p-3 bg-slate-900/90 border border-slate-800 text-xs text-slate-400 rounded-xl font-mono">
+        💡 Click any <b>"Book Gear"</b> button on the left to see Google Apps Script append the row to Google Sheets in real-time.
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let bookingsCount = 1;
+
+    function switchSheetTab(tab) {
+      ['Bookings', 'Students', 'Equipment'].forEach(t => {
+        const table = document.getElementById('table' + t);
+        const btn = document.getElementById('btnTab' + t);
+        if (t === tab) {
+          table.classList.remove('hidden');
+          btn.className = "px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold transition";
+        } else {
+          table.classList.add('hidden');
+          btn.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition";
+        }
+      });
+    }
+
+    function simBook(gearName, gearId) {
+      bookingsCount++;
+      const bookingId = "AUC-BK-" + Math.floor(2000 + Math.random() * 8000);
+      const studentEmail = "alex.johnson@aucegypt.edu";
+
+      // Append row to Bookings table
+      const tbody = document.getElementById('sheetBookingsRows');
+      const tr = document.createElement('tr');
+      tr.className = "bg-emerald-950/40 animate-pulse transition";
+      tr.innerHTML = `
+        <td class="p-2 text-emerald-400 font-bold">${bookingId}</td>
+        <td class="p-2 font-bold text-white">${gearName}</td>
+        <td class="p-2 text-slate-300">${studentEmail}</td>
+        <td class="p-2 text-slate-400 text-[10px]">Tomorrow 10:00 - 16:00</td>
+        <td class="p-2"><span class="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded text-[10px]">Confirmed</span></td>
+      `;
+      tbody.prepend(tr);
+
+      document.getElementById('sheetBookingsCount').innerText = bookingsCount;
+
+      // Switch to bookings tab if not on it
+      switchSheetTab('Bookings');
+
+      // Update log
+      document.getElementById('simLog').innerHTML = `
+        ⚡ <span class="text-emerald-400 font-bold">New Row Appended:</span> ${bookingId} for <b>${gearName}</b> stored in Google Sheet.<br>
+        📧 Automated confirmation email dispatched to <span class="text-amber-300">${studentEmail}</span> via Gmail API.
+      `;
+    }
+  </script>
+</body>
+</html>
